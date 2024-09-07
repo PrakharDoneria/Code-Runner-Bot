@@ -1,5 +1,6 @@
 import { Bot, InlineKeyboard } from "https://deno.land/x/grammy@v1.30.0/mod.ts";
 
+
 const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
 if (!botToken) {
   throw new Error("TELEGRAM_BOT_TOKEN is not set in the environment variables");
