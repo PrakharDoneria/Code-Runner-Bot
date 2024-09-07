@@ -1,0 +1,35 @@
+{
+  "headers": {
+    "content-type": "application/typescript; charset=utf-8",
+    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+    "cross-origin-opener-policy": "same-origin",
+    "date": "Sat, 07 Sep 2024 16:20:18 GMT",
+    "last-modified": "Fri, 06 Sep 2024 13:53:49 GMT",
+    "etag": "\"42807ff1d0cdaa2542bd4d77400e76ce\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "deno/gcp-asia-south1",
+    "via": "http/2 edgeproxy-h",
+    "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+    "x-amz-cf-id": "4WXbD6c2tS0ap5d8Qo3wefaimo2WJTCatRR0GTHIKtJmukso0KnOOA==",
+    "x-frame-options": "DENY",
+    "x-amz-replication-status": "COMPLETED",
+    "x-content-type-options": "nosniff",
+    "cross-origin-embedder-policy": "same-origin",
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "cross-origin-resource-policy": "same-origin",
+    "vary": "Accept-Encoding, Origin",
+    "x-amz-server-side-encryption": "AES256",
+    "server-timing": "fetchSource;dur=822",
+    "x-amz-version-id": "7s4SJ8zxnXm6fqadGZhI6U_yUU8UYYSc",
+    "x-cache": "Miss from cloudfront",
+    "cache-control": "public, max-age=31536000, immutable",
+    "x-amz-cf-pop": "BOM78-P8",
+    "content-length": "140248"
+  },
+  "url": "https://deno.land/x/grammy_types@v3.14.0/methods.ts",
+  "now": {
+    "secs_since_epoch": 1725726018,
+    "nanos_since_epoch": 367242893
+  }
+}

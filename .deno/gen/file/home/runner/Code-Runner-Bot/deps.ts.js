@@ -1,0 +1,2 @@
+export { Bot, InlineKeyboard } from "https://deno.land/x/grammy@v1.30.0/mod.ts";
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImZpbGU6Ly8vaG9tZS9ydW5uZXIvQ29kZS1SdW5uZXItQm90L2RlcHMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IHsgQm90LCBJbmxpbmVLZXlib2FyZCB9IGZyb20gXCJodHRwczovL2Rlbm8ubGFuZC94L2dyYW1teUB2MS4zMC4wL21vZC50c1wiOyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxTQUFTLEdBQUcsRUFBRSxjQUFjLFFBQVEsNENBQTRDIn0=

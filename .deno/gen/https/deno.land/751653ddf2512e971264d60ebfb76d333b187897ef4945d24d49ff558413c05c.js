@@ -1,0 +1,25 @@
+/** Are we running on Deno or in a web browser? */ export const isDeno = typeof Deno !== "undefined";
+// === Export debug
+import debug from "https://cdn.skypack.dev/debug@4.3.4";
+export { debug };
+const DEBUG = "DEBUG";
+if (isDeno) {
+  debug.useColors = ()=>!Deno.noColor;
+  const env = {
+    name: "env",
+    variable: DEBUG
+  };
+  const res = await Deno.permissions.query(env);
+  let namespace = undefined;
+  if (res.state === "granted") namespace = Deno.env.get(DEBUG);
+  if (namespace) debug.enable(namespace);
+  else debug.disable();
+}
+// === Export system-specific operations
+// Turn an AsyncIterable<Uint8Array> into a stream
+export const itrToStream = (itr)=>ReadableStream.from(itr);
+// === Base configuration for `fetch` calls
+export const baseFetchConfig = (_apiRoot)=>({});
+// === Default webhook adapter
+export const defaultAdapter = "oak";
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImh0dHBzOi8vZGVuby5sYW5kL3gvZ3JhbW15QHYxLjMwLjAvcGxhdGZvcm0uZGVuby50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKiogQXJlIHdlIHJ1bm5pbmcgb24gRGVubyBvciBpbiBhIHdlYiBicm93c2VyPyAqL1xuZXhwb3J0IGNvbnN0IGlzRGVubyA9IHR5cGVvZiBEZW5vICE9PSBcInVuZGVmaW5lZFwiO1xuXG4vLyA9PT0gRXhwb3J0IGRlYnVnXG5pbXBvcnQgZGVidWcgZnJvbSBcImh0dHBzOi8vY2RuLnNreXBhY2suZGV2L2RlYnVnQDQuMy40XCI7XG5leHBvcnQgeyBkZWJ1ZyB9O1xuY29uc3QgREVCVUcgPSBcIkRFQlVHXCI7XG5pZiAoaXNEZW5vKSB7XG4gICAgZGVidWcudXNlQ29sb3JzID0gKCkgPT4gIURlbm8ubm9Db2xvcjtcbiAgICBjb25zdCBlbnYgPSB7IG5hbWU6IFwiZW52XCIsIHZhcmlhYmxlOiBERUJVRyB9IGFzIGNvbnN0O1xuICAgIGNvbnN0IHJlcyA9IGF3YWl0IERlbm8ucGVybWlzc2lvbnMucXVlcnkoZW52KTtcbiAgICBsZXQgbmFtZXNwYWNlOiBzdHJpbmcgfCB1bmRlZmluZWQgPSB1bmRlZmluZWQ7XG4gICAgaWYgKHJlcy5zdGF0ZSA9PT0gXCJncmFudGVkXCIpIG5hbWVzcGFjZSA9IERlbm8uZW52LmdldChERUJVRyk7XG4gICAgaWYgKG5hbWVzcGFjZSkgZGVidWcuZW5hYmxlKG5hbWVzcGFjZSk7XG4gICAgZWxzZSBkZWJ1Zy5kaXNhYmxlKCk7XG59XG5cbi8vID09PSBFeHBvcnQgc3lzdGVtLXNwZWNpZmljIG9wZXJhdGlvbnNcbi8vIFR1cm4gYW4gQXN5bmNJdGVyYWJsZTxVaW50OEFycmF5PiBpbnRvIGEgc3RyZWFtXG5leHBvcnQgY29uc3QgaXRyVG9TdHJlYW0gPSAoaXRyOiBBc3luY0l0ZXJhYmxlPFVpbnQ4QXJyYXk+KSA9PlxuICAgIFJlYWRhYmxlU3RyZWFtLmZyb20oaXRyKTtcblxuLy8gPT09IEJhc2UgY29uZmlndXJhdGlvbiBmb3IgYGZldGNoYCBjYWxsc1xuZXhwb3J0IGNvbnN0IGJhc2VGZXRjaENvbmZpZyA9IChfYXBpUm9vdDogc3RyaW5nKSA9PiAoe30pO1xuXG4vLyA9PT0gRGVmYXVsdCB3ZWJob29rIGFkYXB0ZXJcbmV4cG9ydCBjb25zdCBkZWZhdWx0QWRhcHRlciA9IFwib2FrXCI7XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsZ0RBQWdELEdBQ2hELE9BQU8sTUFBTSxTQUFTLE9BQU8sU0FBUyxZQUFZO0FBRWxELG1CQUFtQjtBQUNuQixPQUFPLFdBQVcsc0NBQXNDO0FBQ3hELFNBQVMsS0FBSyxHQUFHO0FBQ2pCLE1BQU0sUUFBUTtBQUNkLElBQUksUUFBUTtFQUNSLE1BQU0sU0FBUyxHQUFHLElBQU0sQ0FBQyxLQUFLLE9BQU87RUFDckMsTUFBTSxNQUFNO0lBQUUsTUFBTTtJQUFPLFVBQVU7RUFBTTtFQUMzQyxNQUFNLE1BQU0sTUFBTSxLQUFLLFdBQVcsQ0FBQyxLQUFLLENBQUM7RUFDekMsSUFBSSxZQUFnQztFQUNwQyxJQUFJLElBQUksS0FBSyxLQUFLLFdBQVcsWUFBWSxLQUFLLEdBQUcsQ0FBQyxHQUFHLENBQUM7RUFDdEQsSUFBSSxXQUFXLE1BQU0sTUFBTSxDQUFDO09BQ3ZCLE1BQU0sT0FBTztBQUN0QjtBQUVBLHdDQUF3QztBQUN4QyxrREFBa0Q7QUFDbEQsT0FBTyxNQUFNLGNBQWMsQ0FBQyxNQUN4QixlQUFlLElBQUksQ0FBQyxLQUFLO0FBRTdCLDJDQUEyQztBQUMzQyxPQUFPLE1BQU0sa0JBQWtCLENBQUMsV0FBcUIsQ0FBQyxDQUFDLENBQUMsRUFBRTtBQUUxRCw4QkFBOEI7QUFDOUIsT0FBTyxNQUFNLGlCQUFpQixNQUFNIn0=
