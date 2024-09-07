@@ -1,0 +1,22 @@
+# Ignore Deno's cache and compiled files
+.deno/
+
+# Ignore logs
+*.log
+
+# Ignore environment files
+.env
+
+# Ignore local Deno configuration files
+deno.jsonc
+deno.lock
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+.replit/
+.replit.nix
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
