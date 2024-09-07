@@ -14,8 +14,6 @@ deno.lock
 # Ignore editor-specific files
 .vscode/
 .idea/
-.replit/
-.replit.nix
 
 # Ignore OS-specific files
 .DS_Store
