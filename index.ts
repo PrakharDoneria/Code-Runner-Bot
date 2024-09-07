@@ -1,5 +1,5 @@
-import { Bot, InlineKeyboard } from "https://deno.land/x/grammy@v1.30.0/mod.ts";
-
+import { Bot, InlineKeyboard, webhookCallback } from "https://deno.land/x/grammy@v1.30.0/mod.ts";
+import { serve } from "https://deno.land/std/http/server.ts";
 
 const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
 if (!botToken) {
@@ -19,13 +19,11 @@ async function runCode(sourceCode: string, language: string, version: string) {
       stdin: "",
       log: 0,
     };
-
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-
     if (response.ok) {
       return await response.json();
     } else {
@@ -40,24 +38,20 @@ async function runCode(sourceCode: string, language: string, version: string) {
 async function handleCodeCommand(ctx: any, language: string, version: string) {
   const chatId = ctx.chat.id;
   let code = "";
-
   const onMessage = (message: string) => {
     if (message === "") {
       return;
     }
     code += message + "\n";
   };
-
   bot.on("message:text", (messageCtx: any) => {
     if (messageCtx.chat.id === chatId) {
       onMessage(messageCtx.message.text);
     }
   });
-
   try {
     await ctx.api.sendChatAction(chatId, "typing");
     await ctx.api.sendMessage(chatId, `Please send your ${language} code line by line. Send an empty message when you're done.`);
-
     setTimeout(async () => {
       try {
         const result = await runCode(code.trim(), language, version);
@@ -77,24 +71,7 @@ async function handleCodeCommand(ctx: any, language: string, version: string) {
 bot.command("start", async (ctx) => {
   try {
     const chatId = ctx.chat.id;
-    await ctx.api.sendMessage(chatId, 
-      "Welcome to the code execution bot! Use the following commands to run your code:\n\n" +
-      "/python - Run Python code\n" +
-      "/dart - Run Dart code\n" +
-      "/javascript - Run JavaScript code\n" +
-      "/csharp - Run C# code\n" +
-      "/java - Run Java code\n" +
-      "/kotlin - Run Kotlin code\n" +
-      "/lua - Run Lua code\n" +
-      "/php - Run PHP code\n" +
-      "/perl - Run Perl code\n" +
-      "/ruby - Run Ruby code\n" +
-      "/rust - Run Rust code\n" +
-      "/swift - Run Swift code\n" +
-      "/sqlite3 - Run SQLite3 code\n" +
-      "/languages - List available languages\n" +
-      "/donate - Support the bot"
-    );
+    await ctx.api.sendMessage(chatId, "Welcome to the code execution bot! Use the following commands to run your code:\n\n/start - Get a welcome message and list of commands\n/help - Get help on how to use the bot\n/languages - List available languages and their commands\n/donate - Support the bot");
   } catch (error) {
     console.error("Error handling /start command:", error);
     await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
@@ -104,16 +81,7 @@ bot.command("start", async (ctx) => {
 bot.command("help", async (ctx) => {
   try {
     const chatId = ctx.chat.id;
-    await ctx.api.sendMessage(chatId, 
-      "This bot allows you to execute code in various programming languages.\n\n" +
-      "To use it, send a command followed by your code. For example:\n" +
-      "/python\n<your code here>\n\n" +
-      "Commands:\n" +
-      "/start - Get a welcome message and list of commands\n" +
-      "/help - Get help on how to use the bot\n" +
-      "/languages - List available languages and their commands\n" +
-      "/donate - Support the bot"
-    );
+    await ctx.api.sendMessage(chatId, "This bot allows you to execute code in various programming languages.\n\nTo use it, send a command followed by your code. For example:\n/python\n<your code here>\n\nCommands:\n/start - Get a welcome message and list of commands\n/help - Get help on how to use the bot\n/languages - List available languages and their commands\n/donate - Support the bot");
   } catch (error) {
     console.error("Error handling /help command:", error);
     await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
@@ -123,23 +91,7 @@ bot.command("help", async (ctx) => {
 bot.command("languages", async (ctx) => {
   try {
     const chatId = ctx.chat.id;
-    await ctx.api.sendMessage(chatId, 
-      "Available languages:\n\n" +
-      "Python - /python\n" +
-      "Dart - /dart\n" +
-      "JavaScript - /javascript\n" +
-      "C# - /csharp\n" +
-      "Java - /java\n" +
-      "Kotlin - /kotlin\n" +
-      "Lua - /lua\n" +
-      "PHP - /php\n" +
-      "Perl - /perl\n" +
-      "Ruby - /ruby\n" +
-      "Rust - /rust\n" +
-      "Swift - /swift\n" +
-      "SQLite3 - /sqlite3\n" +
-      "/donate - Support the bot"
-    );
+    await ctx.api.sendMessage(chatId, "Available languages:\n\nPython - /python\nDart - /dart\nJavaScript - /javascript\nC# - /csharp\nJava - /java\nKotlin - /kotlin\nLua - /lua\nPHP - /php\nPerl - /perl\nRuby - /ruby\nRust - /rust\nSwift - /swift\nSQLite3 - /sqlite3\n/donate - Support the bot");
   } catch (error) {
     console.error("Error handling /languages command:", error);
     await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
@@ -149,16 +101,8 @@ bot.command("languages", async (ctx) => {
 bot.command("donate", async (ctx) => {
   try {
     const chatId = ctx.chat.id;
-    const keyboard = new InlineKeyboard()
-      .add(
-        { text: "Donate via PayPal", url: "https://paypal.me/prakhardoneria" },
-        { text: "Buy Me a Coffee", url: "https://www.buymeacoffee.com/prakhardoneria.in" }
-      );
-
-    await ctx.api.sendMessage(chatId, 
-      "If you appreciate this bot and want to support its development, you can donate via the following options:",
-      { reply_markup: keyboard }
-    );
+    const keyboard = new InlineKeyboard().add({ text: "Donate via PayPal", url: "https://paypal.me/prakhardoneria" }, { text: "Buy Me a Coffee", url: "https://www.buymeacoffee.com/prakhardoneria.in" });
+    await ctx.api.sendMessage(chatId, "If you appreciate this bot and want to support its development, you can donate via the following options:", { reply_markup: keyboard });
   } catch (error) {
     console.error("Error handling /donate command:", error);
     await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
@@ -179,8 +123,26 @@ bot.command("rust", (ctx) => handleCodeCommand(ctx, "rust", "1.68.2"));
 bot.command("swift", (ctx) => handleCodeCommand(ctx, "swift", "5.3.3"));
 bot.command("sqlite3", (ctx) => handleCodeCommand(ctx, "sqlite3", "3.36.0"));
 
+const handleUpdate = webhookCallback(bot, "std/http");
+
+serve(async (req) => {
+  if (req.method === "POST") {
+    const url = new URL(req.url);
+    if (url.pathname.slice(1) === botToken) {
+      try {
+        return await handleUpdate(req);
+      } catch (err) {
+        console.error("Error handling update:", err);
+      }
+    }
+  }
+  return new Response();
+});
+
 try {
-  bot.start();
+  const webhookUrl = `https://coderunner.deno.dev/${botToken}`;
+  await fetch(`https://api.telegram.org/bot${botToken}/setWebhook?url=${webhookUrl}`);
+  console.log("Webhook set successfully.");
 } catch (error) {
-  console.error("Error starting the bot:", error);
+  console.error("Error setting webhook:", error);
 }
