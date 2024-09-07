@@ -37,7 +37,7 @@ async function runCode(sourceCode: string, language: string, version: string) {
 }
 
 async function handleCodeCommand(ctx: any, language: string, version: string) {
-  const userId = ctx.message.from.id;
+  const chatId = ctx.chat.id;
   let code = "";
 
   const onMessage = (message: string) => {
@@ -48,34 +48,35 @@ async function handleCodeCommand(ctx: any, language: string, version: string) {
   };
 
   bot.on("message:text", (messageCtx: any) => {
-    if (messageCtx.message.from.id === userId) {
+    if (messageCtx.chat.id === chatId) {
       onMessage(messageCtx.message.text);
     }
   });
 
   try {
-    await ctx.api.sendChatAction(userId, "typing");
-    await ctx.api.sendMessage(userId, `Please send your ${language} code line by line. Send an empty message when you're done.`);
+    await ctx.api.sendChatAction(chatId, "typing");
+    await ctx.api.sendMessage(chatId, `Please send your ${language} code line by line. Send an empty message when you're done.`);
 
     setTimeout(async () => {
       try {
         const result = await runCode(code.trim(), language, version);
         const output = result.run?.output || `Error: ${result.error}`;
-        await ctx.api.sendMessage(userId, output);
+        await ctx.api.sendMessage(chatId, output);
       } catch (error) {
         console.error("Error sending result:", error);
-        await ctx.api.sendMessage(userId, "An error occurred while sending the result.");
+        await ctx.api.sendMessage(chatId, "An error occurred while sending the result.");
       }
     }, 60000);
   } catch (error) {
     console.error("Error handling code command:", error);
-    await ctx.api.sendMessage(userId, "An error occurred while processing your code.");
+    await ctx.api.sendMessage(chatId, "An error occurred while processing your code.");
   }
 }
 
 bot.command("start", async (ctx) => {
   try {
-    await ctx.api.sendMessage(ctx.message.from.id, 
+    const chatId = ctx.chat.id;
+    await ctx.api.sendMessage(chatId, 
       "Welcome to the code execution bot! Use the following commands to run your code:\n\n" +
       "/python - Run Python code\n" +
       "/dart - Run Dart code\n" +
@@ -95,13 +96,14 @@ bot.command("start", async (ctx) => {
     );
   } catch (error) {
     console.error("Error handling /start command:", error);
-    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+    await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
   }
 });
 
 bot.command("help", async (ctx) => {
   try {
-    await ctx.api.sendMessage(ctx.message.from.id, 
+    const chatId = ctx.chat.id;
+    await ctx.api.sendMessage(chatId, 
       "This bot allows you to execute code in various programming languages.\n\n" +
       "To use it, send a command followed by your code. For example:\n" +
       "/python\n<your code here>\n\n" +
@@ -113,13 +115,14 @@ bot.command("help", async (ctx) => {
     );
   } catch (error) {
     console.error("Error handling /help command:", error);
-    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+    await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
   }
 });
 
 bot.command("languages", async (ctx) => {
   try {
-    await ctx.api.sendMessage(ctx.message.from.id, 
+    const chatId = ctx.chat.id;
+    await ctx.api.sendMessage(chatId, 
       "Available languages:\n\n" +
       "Python - /python\n" +
       "Dart - /dart\n" +
@@ -138,26 +141,26 @@ bot.command("languages", async (ctx) => {
     );
   } catch (error) {
     console.error("Error handling /languages command:", error);
-    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+    await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
   }
 });
 
 bot.command("donate", async (ctx) => {
   try {
-    const userId = ctx.message.from.id;
+    const chatId = ctx.chat.id;
     const keyboard = new InlineKeyboard()
       .add(
         { text: "Donate via PayPal", url: "https://paypal.me/prakhardoneria" },
         { text: "Buy Me a Coffee", url: "https://www.buymeacoffee.com/prakhardoneria.in" }
       );
 
-    await ctx.api.sendMessage(userId, 
+    await ctx.api.sendMessage(chatId, 
       "If you appreciate this bot and want to support its development, you can donate via the following options:",
       { reply_markup: keyboard }
     );
   } catch (error) {
     console.error("Error handling /donate command:", error);
-    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+    await ctx.api.sendMessage(ctx.chat.id, "An error occurred while processing your request.");
   }
 });
 
