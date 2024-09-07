@@ -9,25 +9,30 @@ const bot = new Bot(botToken);
 const url = "https://emkc.org/api/v2/piston/execute";
 
 async function runCode(sourceCode: string, language: string, version: string) {
-  const payload = {
-    language,
-    version,
-    files: [{ content: sourceCode }],
-    args: [],
-    stdin: "",
-    log: 0,
-  };
+  try {
+    const payload = {
+      language,
+      version,
+      files: [{ content: sourceCode }],
+      args: [],
+      stdin: "",
+      log: 0,
+    };
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-  if (response.ok) {
-    return await response.json();
-  } else {
-    return { error: `Request failed with status code ${response.status}` };
+    if (response.ok) {
+      return await response.json();
+    } else {
+      return { error: `Request failed with status code ${response.status}` };
+    }
+  } catch (error) {
+    console.error("Error running code:", error);
+    return { error: "An error occurred while running the code." };
   }
 }
 
@@ -48,82 +53,112 @@ async function handleCodeCommand(ctx: any, language: string, version: string) {
     }
   });
 
-  await ctx.api.sendChatAction(userId, "typing");
-  await ctx.api.sendMessage(userId, `Please send your ${language} code line by line. Send an empty message when you're done.`);
+  try {
+    await ctx.api.sendChatAction(userId, "typing");
+    await ctx.api.sendMessage(userId, `Please send your ${language} code line by line. Send an empty message when you're done.`);
 
-  setTimeout(async () => {
-    const result = await runCode(code.trim(), language, version);
-    const output = result.run?.output || `Error: ${result.error}`;
-    await ctx.api.sendMessage(userId, output);
-  }, 60000);
+    setTimeout(async () => {
+      try {
+        const result = await runCode(code.trim(), language, version);
+        const output = result.run?.output || `Error: ${result.error}`;
+        await ctx.api.sendMessage(userId, output);
+      } catch (error) {
+        console.error("Error sending result:", error);
+        await ctx.api.sendMessage(userId, "An error occurred while sending the result.");
+      }
+    }, 60000);
+  } catch (error) {
+    console.error("Error handling code command:", error);
+    await ctx.api.sendMessage(userId, "An error occurred while processing your code.");
+  }
 }
 
 bot.command("start", async (ctx) => {
-  await ctx.api.sendMessage(ctx.message.from.id, 
-    "Welcome to the code execution bot! Use the following commands to run your code:\n\n" +
-    "/python - Run Python code\n" +
-    "/dart - Run Dart code\n" +
-    "/javascript - Run JavaScript code\n" +
-    "/csharp - Run C# code\n" +
-    "/java - Run Java code\n" +
-    "/kotlin - Run Kotlin code\n" +
-    "/lua - Run Lua code\n" +
-    "/php - Run PHP code\n" +
-    "/perl - Run Perl code\n" +
-    "/ruby - Run Ruby code\n" +
-    "/rust - Run Rust code\n" +
-    "/swift - Run Swift code\n" +
-    "/sqlite3 - Run SQLite3 code\n" +
-    "/languages - List available languages\n" +
-    "/donate - Support the bot"
-  );
+  try {
+    await ctx.api.sendMessage(ctx.message.from.id, 
+      "Welcome to the code execution bot! Use the following commands to run your code:\n\n" +
+      "/python - Run Python code\n" +
+      "/dart - Run Dart code\n" +
+      "/javascript - Run JavaScript code\n" +
+      "/csharp - Run C# code\n" +
+      "/java - Run Java code\n" +
+      "/kotlin - Run Kotlin code\n" +
+      "/lua - Run Lua code\n" +
+      "/php - Run PHP code\n" +
+      "/perl - Run Perl code\n" +
+      "/ruby - Run Ruby code\n" +
+      "/rust - Run Rust code\n" +
+      "/swift - Run Swift code\n" +
+      "/sqlite3 - Run SQLite3 code\n" +
+      "/languages - List available languages\n" +
+      "/donate - Support the bot"
+    );
+  } catch (error) {
+    console.error("Error handling /start command:", error);
+    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+  }
 });
 
 bot.command("help", async (ctx) => {
-  await ctx.api.sendMessage(ctx.message.from.id, 
-    "This bot allows you to execute code in various programming languages.\n\n" +
-    "To use it, send a command followed by your code. For example:\n" +
-    "/python\n<your code here>\n\n" +
-    "Commands:\n" +
-    "/start - Get a welcome message and list of commands\n" +
-    "/help - Get help on how to use the bot\n" +
-    "/languages - List available languages and their commands\n" +
-    "/donate - Support the bot"
-  );
+  try {
+    await ctx.api.sendMessage(ctx.message.from.id, 
+      "This bot allows you to execute code in various programming languages.\n\n" +
+      "To use it, send a command followed by your code. For example:\n" +
+      "/python\n<your code here>\n\n" +
+      "Commands:\n" +
+      "/start - Get a welcome message and list of commands\n" +
+      "/help - Get help on how to use the bot\n" +
+      "/languages - List available languages and their commands\n" +
+      "/donate - Support the bot"
+    );
+  } catch (error) {
+    console.error("Error handling /help command:", error);
+    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+  }
 });
 
 bot.command("languages", async (ctx) => {
-  await ctx.api.sendMessage(ctx.message.from.id, 
-    "Available languages:\n\n" +
-    "Python - /python\n" +
-    "Dart - /dart\n" +
-    "JavaScript - /javascript\n" +
-    "C# - /csharp\n" +
-    "Java - /java\n" +
-    "Kotlin - /kotlin\n" +
-    "Lua - /lua\n" +
-    "PHP - /php\n" +
-    "Perl - /perl\n" +
-    "Ruby - /ruby\n" +
-    "Rust - /rust\n" +
-    "Swift - /swift\n" +
-    "SQLite3 - /sqlite3\n" +
-    "/donate - Support the bot"
-  );
+  try {
+    await ctx.api.sendMessage(ctx.message.from.id, 
+      "Available languages:\n\n" +
+      "Python - /python\n" +
+      "Dart - /dart\n" +
+      "JavaScript - /javascript\n" +
+      "C# - /csharp\n" +
+      "Java - /java\n" +
+      "Kotlin - /kotlin\n" +
+      "Lua - /lua\n" +
+      "PHP - /php\n" +
+      "Perl - /perl\n" +
+      "Ruby - /ruby\n" +
+      "Rust - /rust\n" +
+      "Swift - /swift\n" +
+      "SQLite3 - /sqlite3\n" +
+      "/donate - Support the bot"
+    );
+  } catch (error) {
+    console.error("Error handling /languages command:", error);
+    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+  }
 });
 
 bot.command("donate", async (ctx) => {
-  const userId = ctx.message.from.id;
-  const keyboard = new InlineKeyboard()
-    .add(
-      { text: "Donate via PayPal", url: "https://paypal.me/prakhardoneria" },
-      { text: "Buy Me a Coffee", url: "https://www.buymeacoffee.com/prakhardoneria.in" }
-    );
+  try {
+    const userId = ctx.message.from.id;
+    const keyboard = new InlineKeyboard()
+      .add(
+        { text: "Donate via PayPal", url: "https://paypal.me/prakhardoneria" },
+        { text: "Buy Me a Coffee", url: "https://www.buymeacoffee.com/prakhardoneria.in" }
+      );
 
-  await ctx.api.sendMessage(userId, 
-    "If you appreciate this bot and want to support its development, you can donate via the following options:",
-    { reply_markup: keyboard }
-  );
+    await ctx.api.sendMessage(userId, 
+      "If you appreciate this bot and want to support its development, you can donate via the following options:",
+      { reply_markup: keyboard }
+    );
+  } catch (error) {
+    console.error("Error handling /donate command:", error);
+    await ctx.api.sendMessage(ctx.message.from.id, "An error occurred while processing your request.");
+  }
 });
 
 bot.command("python", (ctx) => handleCodeCommand(ctx, "python", "3.10.0"));
@@ -140,4 +175,8 @@ bot.command("rust", (ctx) => handleCodeCommand(ctx, "rust", "1.68.2"));
 bot.command("swift", (ctx) => handleCodeCommand(ctx, "swift", "5.3.3"));
 bot.command("sqlite3", (ctx) => handleCodeCommand(ctx, "sqlite3", "3.36.0"));
 
-bot.start();
+try {
+  bot.start();
+} catch (error) {
+  console.error("Error starting the bot:", error);
+}
